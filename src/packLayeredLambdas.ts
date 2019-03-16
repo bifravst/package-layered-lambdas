@@ -1,0 +1,39 @@
+import { packLambda, WebpackMode } from './packLambda';
+
+export type LayeredLambdas<A extends { [key: string]: string }> = {
+  id: string;
+  lambdaZipFileNames: A;
+};
+
+export const packLayeredLambdas = async <
+  A extends { [key: string]: string }
+>(args: {
+  id: string;
+  webpackConfig: string;
+  mode: WebpackMode;
+  tsConfig: string;
+  outDir: string;
+  Bucket: string;
+  lambdas: A;
+}): Promise<LayeredLambdas<A>> => {
+  const packs = await Promise.all(
+    Object.keys(args.lambdas).map(lambda =>
+      packLambda({
+        ...args,
+        name: lambda,
+        src: args.lambdas[lambda],
+      }),
+    ),
+  );
+
+  return {
+    id: args.id,
+    lambdaZipFileNames: packs.reduce(
+      (zipFileNames, { name, zipFileName }) => {
+        zipFileNames[name] = zipFileName;
+        return zipFileNames;
+      },
+      {} as A,
+    ),
+  };
+};
