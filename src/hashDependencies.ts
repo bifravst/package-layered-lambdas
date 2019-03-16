@@ -13,14 +13,16 @@ const writeFile = promisify(fs.writeFile);
 export const hashDependencies = async (args: {
   name: string;
   src: string;
+  srcDir: string;
   outDir: string;
   tsConfig: string;
+  ignoreFolders?: string[];
 }): Promise<{
   checksum: string;
   hashes: { [key: string]: string };
   files: string[];
 }> => {
-  const { src, name, tsConfig } = args;
+  const { srcDir, src, name, tsConfig, ignoreFolders } = args;
   // Cache dependencies
   const dependenciesFile = path.resolve(args.outDir, `${name}.deps.json`);
   try {
@@ -40,15 +42,20 @@ export const hashDependencies = async (args: {
   } catch (_) {
     // calculate the checksum for the file, which is the checksum of the file itself,
     // and of the intra-project dependencies
-    const awsFolder = path.resolve(__dirname, '..', '..', 'aws');
     const deps = dependencyTree.toList({
       filename: src,
-      directory: path.resolve(__dirname, '..', '..'),
+      directory: srcDir,
       // @ts-ignore
       tsConfig,
       filter: (sourceFile: string) =>
-        sourceFile.indexOf('node_modules') === -1 && // do not look at module dependencies
-        sourceFile.indexOf(awsFolder) === -1, // ignore aws folder
+        sourceFile.indexOf('node_modules') === -1 && ignoreFolders // do not look at module dependencies
+          ? ignoreFolders.reduce((pass, folder) => {
+              if (!pass) {
+                return false;
+              }
+              return sourceFile.indexOf(folder) === -1;
+            }, true)
+          : true, // ignore other folders
     });
     const intraProjectDeps = deps.filter(
       (path: string) => path.indexOf('node_modules') === -1,

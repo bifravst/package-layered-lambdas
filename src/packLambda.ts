@@ -20,6 +20,7 @@ export enum WebpackMode {
 export const packLambda = async (args: {
   webpackConfig: string;
   mode: WebpackMode;
+  srcDir: string;
   outDir: string;
   Bucket: string;
   name: string;

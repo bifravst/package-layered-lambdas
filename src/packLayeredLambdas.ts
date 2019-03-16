@@ -12,6 +12,7 @@ export const packLayeredLambdas = async <
   webpackConfig: string;
   mode: WebpackMode;
   tsConfig: string;
+  srcDir: string;
   outDir: string;
   Bucket: string;
   lambdas: A;
