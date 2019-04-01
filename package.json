@@ -41,7 +41,7 @@
     "@types/dependency-tree": "^6.1.0",
     "@types/glob": "^7.1.1",
     "@types/node": "^11.11.3",
-    "@types/tmp": "0.0.34",
+    "@types/tmp": "0.1.0",
     "@types/webpack": "^4.4.25",
     "@types/webpack-node-externals": "^1.6.3",
     "@types/yazl": "^2.4.1",
