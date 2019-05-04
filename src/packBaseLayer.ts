@@ -72,10 +72,10 @@ export const packBaseLayer = async (args: {
       }
       return resolve();
     });
-    p.stdout!.on('data', data => {
+    p.stdout.on('data', data => {
       process.stdout.write(chalk.magenta(data.toString()));
     });
-    p.stderr!.on('data', data => {
+    p.stderr.on('data', data => {
       process.stderr.write(chalk.red(data.toString()));
     });
   });
