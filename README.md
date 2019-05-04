@@ -10,3 +10,5 @@ Packages lambdas with intra-project dependencies using Webpack and a base layer 
 Checksums are created for dependencies per lambda so that rebuild only happens when files are changed.
 
 Packaged lambdas are published to S3 so they can be picked up from CloudFormation and shared also cached for other developers.
+
+More background information on this project and usage instructions can be found in [this blog post](https://coderbyheart.com/how-i-package-typescript-lambdas-for-aws/).
