@@ -26,6 +26,7 @@ export const packLambda = async (args: {
   name: string;
   src: string;
   tsConfig: string;
+  ignoreFolders?: string[];
 }): Promise<{
   name: string;
   zipFileName: string;

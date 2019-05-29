@@ -16,6 +16,7 @@ export const packLayeredLambdas = async <
   outDir: string;
   Bucket: string;
   lambdas: A;
+  ignoreFolders?: string[];
 }): Promise<LayeredLambdas<A>> => {
   const packs = await Promise.all(
     Object.keys(args.lambdas).map(lambda =>
