@@ -31,10 +31,10 @@ export const packLayeredLambdas = async <
   return {
     id: args.id,
     lambdaZipFileNames: packs.reduce(
-      (zipFileNames, { name, zipFileName }) => {
-        zipFileNames[name] = zipFileName;
-        return zipFileNames;
-      },
+      (zipFileNames, { name, zipFileName }) => ({
+        ...zipFileNames,
+        [name]: zipFileName,
+      }),
       {} as A,
     ),
   };

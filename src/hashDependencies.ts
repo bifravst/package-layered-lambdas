@@ -49,12 +49,15 @@ export const hashDependencies = async (args: {
       tsConfig,
       filter: (sourceFile: string) =>
         sourceFile.indexOf('node_modules') === -1 && ignoreFolders // do not look at module dependencies
-          ? ignoreFolders.reduce((pass, folder) => {
-              if (!pass) {
-                return false;
-              }
-              return sourceFile.indexOf(folder) === -1;
-            }, true)
+          ? ignoreFolders.reduce(
+              (pass, folder) => {
+                if (!pass) {
+                  return false;
+                }
+                return sourceFile.indexOf(folder) === -1;
+              },
+              true as boolean,
+            )
           : true, // ignore other folders
     });
     const intraProjectDeps = deps.filter(
