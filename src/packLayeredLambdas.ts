@@ -9,7 +9,7 @@ export const packLayeredLambdas = async <
   A extends { [key: string]: string }
 >(args: {
   id: string;
-  webpackConfig: string;
+  webpackConfig?: string;
   mode: WebpackMode;
   tsConfig: string;
   srcDir: string;
