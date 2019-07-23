@@ -31,7 +31,7 @@
     "glob": "^7.1.4",
     "tmp": "0.1.0",
     "ts-loader": "^6.0.4",
-    "webpack": "^4.36.0",
+    "webpack": "^4.37.0",
     "webpack-node-externals": "^1.7.2",
     "yazl": "^2.5.1"
   },
