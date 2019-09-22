@@ -23,28 +23,28 @@
   },
   "homepage": "https://github.com/bifravst/package-layered-lambdas#readme",
   "dependencies": {
-    "aws-sdk": "^2.493.0",
+    "aws-sdk": "^2.533.0",
     "dependency-tree": "^7.0.2",
     "glob": "^7.1.4",
     "tmp": "0.1.0",
-    "ts-loader": "^6.0.4",
-    "webpack": "^4.37.0",
+    "ts-loader": "^6.1.2",
+    "webpack": "^4.40.2",
     "webpack-node-externals": "^1.7.2",
     "yazl": "^2.5.1"
   },
   "devDependencies": {
     "@bifravst/code-style": "^4.0.2",
-    "@commitlint/cli": "^8.1.0",
-    "@commitlint/config-angular": "^8.1.0",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-angular": "^8.2.0",
     "@types/dependency-tree": "^6.1.0",
     "@types/glob": "^7.1.1",
-    "@types/node": "^12.6.6",
+    "@types/node": "^12.7.5",
     "@types/tmp": "0.1.0",
-    "@types/webpack": "^4.4.35",
+    "@types/webpack": "^4.39.1",
     "@types/webpack-node-externals": "^1.6.3",
     "@types/yazl": "^2.4.1",
     "eslint": "^6.4.0",
-    "husky": "^3.0.0"
+    "husky": "^3.0.5"
   },
   "files": [
     "package-lock.json",
