@@ -1,15 +1,7 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2017",
-        "strict": true,
-        "outDir": "dist/",
-        "declaration": true,
-        "skipLibCheck": true,
-        "noUnusedParameters": true,
-        "noUnusedLocals": true
-    },
-    "include": [
-        "src/*"
-    ]
+  "extends": "@bifravst/code-style/tsconfig.json",
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "outDir": "dist/"
+  }
 }

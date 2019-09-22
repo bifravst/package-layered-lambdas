@@ -4,15 +4,12 @@
   "description": "Packages lambda functions and layers for AWS lambda",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "scripts": {
-    "lint": "npm run tslint && npm run prettier:lint",
-    "tslint": "tslint --project ./tsconfig.json",
-    "prettier": "prettier --write \"./src/**.ts\"",
-    "prettier:lint": "prettier --list-different \"./src/**.ts\""
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bifravst/package-layered-lambdas.git"
+  },
+  "scripts": {
+    "lint": "eslint --ext .js,.ts src/**"
   },
   "keywords": [
     "aws",
@@ -36,9 +33,9 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
+    "@bifravst/code-style": "^4.0.2",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-angular": "^8.1.0",
-    "@nrfcloud/tslint-config": "^3.10.0",
     "@types/dependency-tree": "^6.1.0",
     "@types/glob": "^7.1.1",
     "@types/node": "^12.6.6",
@@ -46,10 +43,8 @@
     "@types/webpack": "^4.4.35",
     "@types/webpack-node-externals": "^1.6.3",
     "@types/yazl": "^2.4.1",
-    "husky": "^3.0.0",
-    "prettier": "^1.18.2",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "eslint": "^6.4.0",
+    "husky": "^3.0.0"
   },
   "files": [
     "package-lock.json",
@@ -71,7 +66,18 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -e",
-      "pre-commit": "npm run lint"
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --ext .js,.ts",
+      "git add"
+    ],
+    "*.{md,json,yaml,yml,js}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
