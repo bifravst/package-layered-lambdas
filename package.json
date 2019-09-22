@@ -1,5 +1,5 @@
 {
-  "name": "@nrfcloud/package-layered-lambdas",
+  "name": "@bifravst/package-layered-lambdas",
   "version": "0.0.0-development",
   "description": "Packages lambda functions and layers for AWS lambda",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nRFCloud/package-layered-lambdas.git"
+    "url": "git+https://github.com/bifravst/package-layered-lambdas.git"
   },
   "keywords": [
     "aws",
@@ -22,9 +22,9 @@
   "author": "Nordic Semiconductor ASA | nordicsemi.no",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/nRFCloud/package-layered-lambdas/issues"
+    "url": "https://github.com/bifravst/package-layered-lambdas/issues"
   },
-  "homepage": "https://github.com/nRFCloud/package-layered-lambdas#readme",
+  "homepage": "https://github.com/bifravst/package-layered-lambdas#readme",
   "dependencies": {
     "aws-sdk": "^2.493.0",
     "dependency-tree": "^7.0.2",
@@ -65,7 +65,7 @@
     "remoteTags": true
   },
   "engines": {
-    "node": ">=8.0.0",
+    "node": ">=12.0.0",
     "npm": ">=6.0.0"
   },
   "husky": {
