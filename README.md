@@ -1,4 +1,4 @@
-# Package Layered Lambdas [![npm version](https://img.shields.io/npm/v/@bifravst/package-layered-lambdas.svg)](https://www.npmjs.com/package/@nrfcloud/package-layered-lambdas)
+# Package Layered Lambdas
 
 [![GitHub Actions](https://github.com/bifravst/package-layered-lambdas/workflows/Test%20and%20Release/badge.svg)](https://github.com/bifravst/package-layered-lambdas/actions)
 [![Greenkeeper badge](https://badges.greenkeeper.io/bifravst/package-layered-lambdas.svg)](https://greenkeeper.io/)
@@ -17,3 +17,12 @@ CloudFormation and shared also cached for other developers.
 More background information on this project and usage instructions can be found
 in
 [this blog post](https://coderbyheart.com/how-i-package-typescript-lambdas-for-aws/).
+
+## Installation
+
+> Note: This package is hosted on the GitHub package registry and
+> [npm needs to be configured](https://help.github.com/en/articles/configuring-npm-for-use-with-github-package-registry#installing-a-package)
+> in order to use it.
+
+    echo "@bifravst:registry=https://npm.pkg.github.com" >> .npmrc
+    npm i --save-dev @bifravst/package-layered-lambdas
