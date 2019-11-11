@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import * as chalk from 'chalk'
 import * as fs from 'fs'
 import { S3 } from 'aws-sdk'
 import { promisify } from 'util'

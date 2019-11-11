@@ -24,6 +24,7 @@
   "homepage": "https://github.com/bifravst/package-layered-lambdas#readme",
   "dependencies": {
     "aws-sdk": "^2.535.0",
+    "chalk": "^3.0.0",
     "dependency-tree": "^7.0.2",
     "glob": "^7.1.4",
     "tmp": "0.1.0",
