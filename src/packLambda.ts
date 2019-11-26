@@ -18,7 +18,6 @@ export enum WebpackMode {
  * Packs the lambda and all of its inter-project dependencies using webpack and uploads it to S3
  */
 export const packLambda = async (args: {
-	webpackConfig?: string
 	mode: WebpackMode
 	srcDir: string
 	outDir: string
@@ -36,7 +35,7 @@ export const packLambda = async (args: {
 		hashes: { [key: string]: string }
 	}
 }> => {
-	const { tsConfig, webpackConfig, mode, outDir, Bucket, name, src } = args
+	const { tsConfig, mode, outDir, Bucket, name, src } = args
 	try {
 		fs.statSync(args.src)
 	} catch (e) {
@@ -110,7 +109,7 @@ export const packLambda = async (args: {
 							loader: 'ts-loader',
 							exclude: /node_modules/,
 							options: {
-								configFile: webpackConfig || tsConfig,
+								configFile: tsConfig,
 								transpileOnly: true,
 								experimentalWatchApi: true,
 							},
