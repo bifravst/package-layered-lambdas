@@ -39,7 +39,7 @@
     "@commitlint/config-angular": "^8.2.0",
     "@types/dependency-tree": "^6.1.0",
     "@types/glob": "^7.1.1",
-    "@types/node": "^12.12.14",
+    "@types/node": "^13.1.0",
     "@types/tmp": "0.1.0",
     "@types/webpack": "^4.41.0",
     "@types/webpack-node-externals": "^1.7.0",
