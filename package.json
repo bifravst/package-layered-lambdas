@@ -58,7 +58,9 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "release": {
-    "branch": "saga",
+    "branches": [
+      "saga"
+    ],
     "remoteTags": true
   },
   "engines": {

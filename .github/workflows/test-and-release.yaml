@@ -40,5 +40,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm i --no-save semantic-release@next
+          npm i --no-save semantic-release
           npx semantic-release
