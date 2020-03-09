@@ -58,6 +58,9 @@ export const packLambda = async (args: {
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
 	// Check if it already has been built and published
+	console.error(
+		chalk.gray(`Chechking if lambda exists on S3: ${chalk.green.dim(name)}`),
+	)
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
 		console.error(chalk.green.dim(`${name} ✔️`))
 		return {
@@ -84,6 +87,9 @@ export const packLambda = async (args: {
 	}
 
 	// Check if file exists on S3
+	console.error(
+		chalk.gray(`Chechking if lambda exists on S3: ${chalk.green.dim(name)}`),
+	)
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
 		console.error(chalk.yellow.dim(`${name} ✔️`))
 		return {
