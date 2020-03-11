@@ -47,7 +47,7 @@ export const packBaseLayer = async ({
 		progress('Checking local file')
 		fs.statSync(localPath)
 		// File exists
-		progress('Publishing to S3', `${zipFilenameWithHash} -> ${Bucket}`)
+		progress('Publishing to S3', `-> ${Bucket}`)
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
 		await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 		success('Done')
@@ -117,7 +117,7 @@ export const packBaseLayer = async ({
 		zipfile.end()
 	})
 
-	progress('Publishing to S3', `${zipFilenameWithHash} -> ${Bucket}`)
+	progress('Publishing to S3', `-> ${Bucket}`)
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
 	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 

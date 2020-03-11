@@ -77,7 +77,7 @@ export const packLambda = async (args: {
 		fs.statSync(localPath)
 		success('OK')
 		// File exists
-		progress('Publishing to S3', `${zipFilenameWithHash} -> ${Bucket}`)
+		progress('Publishing to S3', `-> ${Bucket}`)
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
 		await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 		return {
@@ -166,7 +166,7 @@ export const packLambda = async (args: {
 		),
 	)
 
-	progress('Publishing to S3', `${zipFilenameWithHash} -> ${Bucket}`)
+	progress('Publishing to S3', `-> ${Bucket}`)
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
 	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 
