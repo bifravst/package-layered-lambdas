@@ -15,13 +15,11 @@ type Status = {
 	startTime: Date
 }
 
-const color = {
-	progress: chalk.gray,
-	success: chalk.green.dim,
-	failure: chalk.red,
-}
-
-const onScreen = () => {
+/**
+ * Writes the output to the screen, while overwriting previous outputs.
+ * This is useful for interactive shells.
+ */
+const redrawingWriter = () => {
 	let lastLines = 0
 	return (out: string) => {
 		if (lastLines > 0) {
@@ -37,9 +35,15 @@ const onScreen = () => {
 	}
 }
 
-const draw = (title: string, writer: (out: string) => void) => {
+const tableWriter = (title: string) => {
+	const screenWriter = redrawingWriter()
+	const color = {
+		progress: chalk.gray,
+		success: chalk.green.dim,
+		failure: chalk.red,
+	}
 	return (items: Map<string, Status>) => {
-		writer(
+		screenWriter(
 			table(
 				[
 					[
@@ -97,10 +101,9 @@ const draw = (title: string, writer: (out: string) => void) => {
 	}
 }
 
-export const ConsoleProgressReporter = (title: string): ProgressReporter => {
+const onScreen = (title: string) => {
+	const d = tableWriter(title)
 	const items = new Map<string, Status>()
-	const d = draw(title, onScreen())
-
 	return {
 		progress: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
@@ -131,3 +134,26 @@ export const ConsoleProgressReporter = (title: string): ProgressReporter => {
 		},
 	}
 }
+
+const log = (color: chalk.Chalk, brightColor: chalk.Chalk) => (id: string) => (
+	message: string,
+	...info: string[]
+) => {
+	console.log(
+		chalk.white.dim(`[${new Date().toISOString()}]`),
+		color(id),
+		brightColor(message),
+		...info,
+	)
+}
+
+const onCI = () => ({
+	progress: log(chalk.gray, chalk.gray),
+	success: log(chalk.green.dim, chalk.greenBright),
+	failure: log(chalk.red, chalk.redBright),
+})
+
+export const ConsoleProgressReporter = (
+	title: string,
+	ci = process.env.CI,
+): ProgressReporter => (ci ? onCI() : onScreen(title))
