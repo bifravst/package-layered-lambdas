@@ -1,11 +1,7 @@
 import { checkSumOfFiles } from './checkSum'
 import * as path from 'path'
-import * as fs from 'fs'
-import { promisify } from 'util'
+import { promises as fs, unlinkSync } from 'fs'
 import * as dependencyTree from 'dependency-tree'
-
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
 
 /**
  * Hashes the dependencies of a lambda
@@ -27,12 +23,12 @@ export const hashDependencies = async (args: {
 	const dependenciesFile = path.resolve(args.outDir, `${name}.deps.json`)
 	try {
 		const { files, checksum } = JSON.parse(
-			await readFile(dependenciesFile, 'utf-8'),
+			await fs.readFile(dependenciesFile, 'utf-8'),
 		)
 		const res = await checkSumOfFiles(files)
 		if (res.checksum !== checksum) {
 			// One of the file has changed, throw away the cached dependencies, since there might be more changes.
-			fs.unlinkSync(dependenciesFile)
+			unlinkSync(dependenciesFile)
 			return hashDependencies({
 				...args,
 				name,
@@ -62,7 +58,7 @@ export const hashDependencies = async (args: {
 			(path: string) => !path.includes('node_modules'),
 		)
 		const res = await checkSumOfFiles([src, ...intraProjectDeps])
-		await writeFile(
+		await fs.writeFile(
 			dependenciesFile,
 			JSON.stringify({
 				files: [src, ...intraProjectDeps],
