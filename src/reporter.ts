@@ -48,13 +48,13 @@ const tableWriter = (title: string) => {
 				[
 					[
 						chalk.yellow.bold(title),
-						...['Time', 'Info', 'Status'].map(s => chalk.yellow.dim(s)),
+						...['Time', 'Status', 'Info'].map(s => chalk.yellow.dim(s)),
 					],
 					...Array.from(items, ([id, { status, message, startTime, info }]) => [
 						color[status](id),
 						chalk.grey(`${Date.now() - startTime.getTime()}ms`),
-						(info || ['-']).map(i => chalk.blue(i)).join(' '),
 						color[status](message),
+						(info || ['-']).map(i => chalk.blue(i)).join(' '),
 					]),
 				],
 				{
