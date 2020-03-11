@@ -1,4 +1,3 @@
-import * as chalk from 'chalk'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as yazl from 'yazl'
@@ -8,16 +7,22 @@ import { spawn } from 'child_process'
 import { dirSync } from 'tmp'
 import { existsOnS3 } from './existsOnS3'
 import { publishToS3 } from './publishToS3'
+import { ProgressReporter, ConsoleProgressReporter } from './reporter'
 
 /**
  * Packs a base layer for use with the lambdas with all the dependencies and uploads it to S3
  */
-export const packBaseLayer = async (args: {
+export const packBaseLayer = async ({
+	srcDir,
+	outDir,
+	Bucket,
+	reporter,
+}: {
 	srcDir: string
 	outDir: string
 	Bucket: string
+	reporter?: ProgressReporter
 }): Promise<string> => {
-	const { srcDir, outDir, Bucket } = args
 	const lockFile = path.resolve(srcDir, 'package-lock.json')
 	const hash = (await checkSumOfFiles([lockFile])).checksum
 
@@ -25,32 +30,40 @@ export const packBaseLayer = async (args: {
 	const zipFilenameWithHash = `${name}.zip`
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
+	const r = reporter || ConsoleProgressReporter('Base Layer')
+	const progress = r.progress(name)
+	const success = r.success(name)
+	const failure = r.failure(name)
+
 	// Check if it already has been built and published
+	progress('Checking S3 cache')
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
-		console.error(chalk.green.dim(`${name} ✔️`))
+		success('Done')
 		return zipFilenameWithHash
 	}
 
 	// Check if it already has been built locally
 	try {
+		progress('Checking local file')
 		fs.statSync(localPath)
-		console.error(chalk.green.dim(`${name} ✔️`))
 		// File exists
+		progress('Publishing to S3')
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
 		await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+		success('Done')
 		return zipFilenameWithHash
 	} catch {
 		// Pass
 	}
 
 	// Check if file exists on S3
+	progress('Checking S3 cache')
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
-		console.error(chalk.yellow.dim(`${name} ✔️`))
+		success('Done')
 		return zipFilenameWithHash
 	}
 
-	console.error(chalk.gray(`Packing base layer: ${chalk.green.bold(name)}`))
-	const start = Date.now()
+	progress('Packing base layer')
 
 	const tempDir = dirSync({ unsafeCleanup: false }).name
 	const installDir = `${tempDir}${path.sep}nodejs`
@@ -62,27 +75,29 @@ export const packBaseLayer = async (args: {
 	)
 
 	await new Promise((resolve, reject) => {
-		console.error(chalk.gray(`npm ci --ignore-scripts --only=prod`))
+		progress('Installing dependencies')
 		const p = spawn('npm', ['ci', '--ignore-scripts', '--only=prod'], {
 			cwd: installDir,
 		})
 		p.on('close', code => {
 			if (code !== 0) {
-				return reject(
-					new Error(`npm i in ${installDir} exited with code ${code}.`),
-				)
+				const msg = `npm i in ${installDir} exited with code ${code}.`
+				failure(msg)
+				return reject(new Error(msg))
 			}
+			success('Dependencies installed')
 			return resolve()
 		})
 		p.stdout.on('data', data => {
-			process.stdout.write(chalk.magenta(data.toString()))
+			progress('Installing dependencies:', data.toString())
 		})
 		p.stderr.on('data', data => {
-			process.stderr.write(chalk.red(data.toString()))
+			progress('Installing dependencies:', data.toString())
 		})
 	})
 
 	await new Promise(resolve => {
+		progress('Creating archive')
 		const zipfile = new yazl.ZipFile()
 		const files = glob.sync(`${tempDir}${path.sep}**${path.sep}*`)
 		files.forEach(file => {
@@ -92,20 +107,21 @@ export const packBaseLayer = async (args: {
 		})
 		zipfile.outputStream
 			.pipe(fs.createWriteStream(localPath))
-			.on('close', () => resolve())
+			.on('close', () => {
+				success(
+					'Layer packed',
+					`${Math.round(fs.statSync(localPath).size / 1024)}KB`,
+				)
+				resolve()
+			})
 		zipfile.end()
 	})
 
-	console.error(
-		chalk.gray(
-			`${chalk.green('Done:')} ${chalk.green.bold(name)} ${chalk.blue(
-				`${Math.round(fs.statSync(localPath).size / 1024)}KB`,
-			)} ${chalk.blue(`${Math.round((Date.now() - start) / 1000)}s`)}`,
-		),
-	)
-
+	progress('Publishing to S3')
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
 	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+
+	success('All done')
 
 	return zipFilenameWithHash
 }

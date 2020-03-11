@@ -1,6 +1,8 @@
 {
-	"extends": "@bifravst/eslint-config-typescript",
-	"rules": {
-		"@typescript-eslint/indent": "warn"
-	}
+  "extends": "@bifravst/eslint-config-typescript",
+  "rules": {
+    "@typescript-eslint/indent": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/no-require-imports": "warn"
+  }
 }

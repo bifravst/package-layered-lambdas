@@ -7,6 +7,7 @@ import * as nodeExternals from 'webpack-node-externals'
 import { existsOnS3 } from './existsOnS3'
 import { publishToS3 } from './publishToS3'
 import { hashDependencies } from './hashDependencies'
+import { ProgressReporter } from './reporter'
 
 export enum WebpackMode {
 	development = 'development',
@@ -25,6 +26,7 @@ export const packLambda = async (args: {
 	name: string
 	src: string
 	tsConfig: string
+	reporter: ProgressReporter
 	ignoreFolders?: string[]
 }): Promise<{
 	name: string
@@ -35,16 +37,18 @@ export const packLambda = async (args: {
 		hashes: { [key: string]: string }
 	}
 }> => {
-	const { tsConfig, mode, outDir, Bucket, name, src } = args
+	const { tsConfig, mode, outDir, Bucket, name, src, reporter } = args
+	const progress = reporter.progress(name)
+	const success = reporter.success(name)
+	const failure = reporter.failure(name)
+
 	try {
-		fs.statSync(args.src)
+		fs.statSync(src)
 	} catch (e) {
-		console.error(
-			chalk.red(
-				`The source file ${chalk.cyan(args.src)} for ${chalk.green(
-					name,
-				)} does not exist!`,
-			),
+		failure(
+			`The source file ${chalk.cyan(src)} for ${chalk.green(
+				name,
+			)} does not exist!`,
 		)
 		throw e
 	}
@@ -58,11 +62,9 @@ export const packLambda = async (args: {
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
 	// Check if it already has been built and published
-	console.error(
-		chalk.gray(`Checking if lambda exists on S3: ${chalk.green.dim(name)}`),
-	)
+	progress('Checking if lambda exists on S3')
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
-		console.error(chalk.green.dim(`${name} ✔️`))
+		success('OK')
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -73,7 +75,7 @@ export const packLambda = async (args: {
 	// Check if it already has been built locally
 	try {
 		fs.statSync(localPath)
-		console.error(chalk.green.dim(`${name} ✔️`))
+		success('OK')
 		// File exists
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
 		await existsOnS3(Bucket, zipFilenameWithHash, outDir)
@@ -87,11 +89,9 @@ export const packLambda = async (args: {
 	}
 
 	// Check if file exists on S3
-	console.error(
-		chalk.gray(`Checking if lambda exists on S3: ${chalk.green.dim(name)}`),
-	)
+	progress('Checking if lambda exists on S3')
 	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
-		console.error(chalk.yellow.dim(`${name} ✔️`))
+		success('OK')
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -99,8 +99,7 @@ export const packLambda = async (args: {
 		}
 	}
 
-	console.error(chalk.gray(`Packing lambda: ${chalk.green.bold(name)}`))
-	const start = Date.now()
+	progress('Packing')
 	await new Promise<string>((resolve, reject) =>
 		webpack(
 			{
@@ -138,13 +137,14 @@ export const packLambda = async (args: {
 			},
 			async (err, stats) => {
 				if (err || stats.hasErrors()) {
-					console.error(chalk.red('webpack failed'))
+					failure('webpack failed', err.message)
 					console.error(err)
 					console.error(stats.toString())
 					return reject(err)
 				}
 				const f = path.resolve(outDir, jsFilenameWithHash)
 
+				progress('Creating archive')
 				const zipfile = new yazl.ZipFile()
 				zipfile.addFile(f, 'index.js')
 				zipfile.addBuffer(
@@ -153,22 +153,23 @@ export const packLambda = async (args: {
 				)
 				zipfile.outputStream
 					.pipe(fs.createWriteStream(localPath))
-					.on('close', () => resolve())
+					.on('close', () => {
+						success(
+							'Lambda packed',
+							`${Math.round(fs.statSync(localPath).size / 1024)}KB`,
+						)
+						resolve()
+					})
 				zipfile.end()
 			},
 		),
 	)
 
-	console.error(
-		chalk.gray(
-			`${chalk.green('Done:')} ${chalk.green.bold(name)} ${chalk.blue(
-				`${Math.round(fs.statSync(localPath).size / 1024)}KB`,
-			)} ${chalk.blue(`${Math.round((Date.now() - start) / 1000)}s`)}`,
-		),
-	)
-
+	progress('Publishing to S3')
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
 	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+
+	success('All done')
 
 	return {
 		zipFileName: zipFilenameWithHash,
