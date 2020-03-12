@@ -54,8 +54,11 @@ const tableWriter = (title: string) => {
 						const startTime = startTimes.get(id)
 						return [
 							color[status](id) +
-								`${info?.length &&
-									chalk.grey(': ') + info.map(i => chalk.blue(i)).join(' ')}`,
+								`${
+									info && info.length > 0
+										? chalk.grey(': ') + info.map(i => chalk.blue(i)).join(' ')
+										: ''
+								}`,
 							startTime
 								? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
 								: chalk.grey.dim('-'),
@@ -72,7 +75,7 @@ const tableWriter = (title: string) => {
 							alignment: 'right',
 						},
 						2: {
-							alignment: 'center',
+							alignment: 'left',
 						},
 					},
 					drawHorizontalLine: (index, size) => {
