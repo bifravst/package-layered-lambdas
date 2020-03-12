@@ -24,7 +24,7 @@
   "homepage": "https://github.com/bifravst/package-layered-lambdas#readme",
   "dependencies": {
     "ansi-escapes": "^4.3.1",
-    "aws-sdk": "^2.636.0",
+    "aws-sdk": "^2.638.0",
     "chalk": "^3.0.0",
     "dependency-tree": "^7.2.1",
     "glob": "^7.1.6",
@@ -36,7 +36,7 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "@bifravst/code-style": "^6.0.5",
+    "@bifravst/code-style": "^6.0.6",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-angular": "^8.3.4",
     "@types/dependency-tree": "^6.1.0",
