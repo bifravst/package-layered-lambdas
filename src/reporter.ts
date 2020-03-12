@@ -12,7 +12,7 @@ type Status = {
 	status: 'progress' | 'success' | 'failure'
 	message: string
 	info?: string[]
-	startTime: Date
+	updated: Date
 }
 
 /**
@@ -42,7 +42,7 @@ const tableWriter = (title: string) => {
 		success: chalk.green.dim,
 		failure: chalk.red,
 	}
-	return (items: Map<string, Status>) => {
+	return (items: Map<string, Status>, startTimes: Map<string, Date>) => {
 		screenWriter(
 			table(
 				[
@@ -50,12 +50,17 @@ const tableWriter = (title: string) => {
 						chalk.yellow.bold(title),
 						...['Time', 'Status', 'Info'].map(s => chalk.yellow.dim(s)),
 					],
-					...Array.from(items, ([id, { status, message, startTime, info }]) => [
-						color[status](id),
-						chalk.grey(`${Date.now() - startTime.getTime()}ms`),
-						color[status](message),
-						(info || ['-']).map(i => chalk.blue(i)).join(' '),
-					]),
+					...Array.from(items, ([id, { status, message, info, updated }]) => {
+						const startTime = startTimes.get(id)
+						return [
+							color[status](id),
+							startTime
+								? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
+								: chalk.grey.dim('-'),
+							color[status](message),
+							(info || ['-']).map(i => chalk.blue(i)).join(' '),
+						]
+					}),
 				],
 				{
 					columns: {
@@ -104,33 +109,42 @@ const tableWriter = (title: string) => {
 const onScreen = (title: string) => {
 	const d = tableWriter(title)
 	const items = new Map<string, Status>()
+	const startTimes = new Map<string, Date>()
+	const start = (id: string) => {
+		if (!startTimes.has(id)) {
+			startTimes.set(id, new Date())
+		}
+	}
 	return {
 		progress: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
 				status: 'progress',
 				message,
 				info,
-				startTime: new Date(),
+				updated: new Date(),
 			})
-			d(items)
+			start(id)
+			d(items, startTimes)
 		},
 		success: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
 				status: 'success',
 				message,
 				info,
-				startTime: new Date(),
+				updated: new Date(),
 			})
-			d(items)
+			start(id)
+			d(items, startTimes)
 		},
 		failure: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
 				status: 'failure',
 				message,
 				info,
-				startTime: new Date(),
+				updated: new Date(),
 			})
-			d(items)
+			start(id)
+			d(items, startTimes)
 		},
 	}
 }
