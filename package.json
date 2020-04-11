@@ -24,8 +24,8 @@
   "homepage": "https://github.com/bifravst/package-layered-lambdas#readme",
   "dependencies": {
     "ansi-escapes": "^4.3.1",
-    "aws-sdk": "^2.654.0",
-    "chalk": "^3.0.0",
+    "aws-sdk": "^2.656.0",
+    "chalk": "^4.0.0",
     "dependency-tree": "^7.2.1",
     "glob": "^7.1.6",
     "tables": "^2.2.2",
@@ -36,20 +36,20 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "@bifravst/code-style": "^6.0.6",
+    "@bifravst/code-style": "^7.0.5",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-angular": "^8.3.4",
-    "@types/dependency-tree": "^6.1.0",
+    "@types/dependency-tree": "^7.2.0",
     "@types/glob": "^7.1.1",
-    "@types/node": "^13.9.0",
-    "@types/table": "^4.0.7",
-    "@types/terminal-kit": "^1.28.0",
+    "@types/node": "^13.11.1",
+    "@types/table": "^5.0.0",
+    "@types/terminal-kit": "^1.28.2",
     "@types/tmp": "0.1.0",
-    "@types/webpack": "^4.41.7",
+    "@types/webpack": "^4.41.10",
     "@types/webpack-node-externals": "^1.7.1",
     "@types/yazl": "^2.4.2",
     "eslint": "^6.8.0",
-    "husky": "^4.2.3"
+    "husky": "^4.2.5"
   },
   "files": [
     "package-lock.json",
