@@ -41,6 +41,7 @@ export const packLambda = async (args: {
 	const progress = reporter.progress(name)
 	const success = reporter.success(name)
 	const failure = reporter.failure(name)
+	const sizeInBytes = reporter.sizeInBytes(name)
 
 	try {
 		fs.statSync(src)
@@ -63,8 +64,10 @@ export const packLambda = async (args: {
 
 	// Check if it already has been built and published
 	progress('Checking if lambda exists on S3')
-	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
+	let fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	if (fileSize) {
 		success('OK')
+		sizeInBytes(fileSize)
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -74,8 +77,9 @@ export const packLambda = async (args: {
 
 	// Check if it already has been built locally
 	try {
-		fs.statSync(localPath)
+		const { size } = fs.statSync(localPath)
 		success('OK')
+		sizeInBytes(size)
 		// File exists
 		progress('Publishing to S3', `-> ${Bucket}`)
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
@@ -91,8 +95,10 @@ export const packLambda = async (args: {
 
 	// Check if file exists on S3
 	progress('Checking if lambda exists on S3')
-	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
+	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	if (fileSize) {
 		success('OK')
+		sizeInBytes(fileSize)
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -168,8 +174,8 @@ export const packLambda = async (args: {
 
 	progress('Publishing to S3', `-> ${Bucket}`)
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
-	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
-
+	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	sizeInBytes(fileSize)
 	success('All done')
 
 	return {

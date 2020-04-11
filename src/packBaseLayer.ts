@@ -34,18 +34,22 @@ export const packBaseLayer = async ({
 	const progress = r.progress(name)
 	const success = r.success(name)
 	const failure = r.failure(name)
+	const sizeInBytes = r.sizeInBytes(name)
 
 	// Check if it already has been built and published
 	progress('Checking S3 cache')
-	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
+	let fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	if (fileSize) {
 		success('Done')
+		sizeInBytes(fileSize)
 		return zipFilenameWithHash
 	}
 
 	// Check if it already has been built locally
 	try {
 		progress('Checking local file')
-		fs.statSync(localPath)
+		const { size } = fs.statSync(localPath)
+		sizeInBytes(size)
 		// File exists
 		progress('Publishing to S3', `-> ${Bucket}`)
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
@@ -58,8 +62,10 @@ export const packBaseLayer = async ({
 
 	// Check if file exists on S3
 	progress('Checking S3 cache')
-	if (await existsOnS3(Bucket, zipFilenameWithHash, outDir)) {
+	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	if (fileSize) {
 		success('Done')
+		sizeInBytes(fileSize)
 		return zipFilenameWithHash
 	}
 
@@ -119,8 +125,8 @@ export const packBaseLayer = async ({
 
 	progress('Publishing to S3', `-> ${Bucket}`)
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
-	await existsOnS3(Bucket, zipFilenameWithHash, outDir)
-
+	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
+	sizeInBytes(fileSize)
 	success('All done')
 
 	return zipFilenameWithHash

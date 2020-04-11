@@ -5,6 +5,7 @@ import { table } from 'table'
 export type ProgressReporter = {
 	progress: (id: string) => (message: string, ...info: string[]) => void
 	success: (id: string) => (message: string, ...info: string[]) => void
+	sizeInBytes: (id: string) => (size: number) => void
 	failure: (id: string) => (message: string, ...info: string[]) => void
 }
 
@@ -42,16 +43,21 @@ const tableWriter = (title: string) => {
 		success: chalk.green.dim,
 		failure: chalk.red,
 	}
-	return (items: Map<string, Status>, startTimes: Map<string, Date>) => {
+	return (
+		items: Map<string, Status>,
+		startTimes: Map<string, Date>,
+		sizesInBytes: Map<string, number>,
+	) => {
 		screenWriter(
 			table(
 				[
 					[
 						chalk.yellow.bold(title),
-						...['Time', 'Status'].map(s => chalk.yellow.dim(s)),
+						...['Time', 'Size', 'Status'].map(s => chalk.yellow.dim(s)),
 					],
 					...Array.from(items, ([id, { status, message, info, updated }]) => {
 						const startTime = startTimes.get(id)
+						const size = sizesInBytes.get(id)
 						return [
 							color[status](id) +
 								`${
@@ -62,9 +68,23 @@ const tableWriter = (title: string) => {
 							startTime
 								? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
 								: chalk.grey.dim('-'),
+							size ? chalk.blue(`${Math.round(size / 1024)} KB`) : '',
 							color[status](message),
 						]
 					}),
+					[
+						'',
+						'',
+						chalk.blue.dim(
+							`${Math.round(
+								Array.from(sizesInBytes, ([, size]) => size).reduce(
+									(total, size) => total + size,
+									0,
+								) / 1024,
+							)} KB`,
+						),
+						'',
+					],
 				],
 				{
 					columns: {
@@ -75,11 +95,16 @@ const tableWriter = (title: string) => {
 							alignment: 'right',
 						},
 						2: {
+							alignment: 'right',
+						},
+						3: {
 							alignment: 'left',
 						},
 					},
 					drawHorizontalLine: (index, size) => {
-						return index === 0 || index === 1 || index === size
+						return (
+							index === 0 || index === 1 || index === size - 1 || index === size
+						)
 					},
 					border: Object.entries({
 						topBody: `─`,
@@ -111,6 +136,7 @@ const onScreen = (title: string) => {
 	const d = tableWriter(title)
 	const items = new Map<string, Status>()
 	const startTimes = new Map<string, Date>()
+	const sizesInBytes = new Map<string, number>()
 	const start = (id: string) => {
 		if (!startTimes.has(id)) {
 			startTimes.set(id, new Date())
@@ -125,7 +151,7 @@ const onScreen = (title: string) => {
 				updated: new Date(),
 			})
 			start(id)
-			d(items, startTimes)
+			d(items, startTimes, sizesInBytes)
 		},
 		success: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
@@ -135,7 +161,7 @@ const onScreen = (title: string) => {
 				updated: new Date(),
 			})
 			start(id)
-			d(items, startTimes)
+			d(items, startTimes, sizesInBytes)
 		},
 		failure: (id: string) => (message: string, ...info: string[]) => {
 			items.set(id, {
@@ -145,7 +171,11 @@ const onScreen = (title: string) => {
 				updated: new Date(),
 			})
 			start(id)
-			d(items, startTimes)
+			d(items, startTimes, sizesInBytes)
+		},
+		sizeInBytes: (id: string) => (size: number) => {
+			sizesInBytes.set(id, size)
+			d(items, startTimes, sizesInBytes)
 		},
 	}
 }
@@ -166,6 +196,8 @@ const onCI = () => ({
 	progress: log(chalk.gray, chalk.gray),
 	success: log(chalk.green.dim, chalk.greenBright),
 	failure: log(chalk.red, chalk.redBright),
+	sizeInBytes: (id: string) => (size: number) =>
+		log(chalk.gray, chalk.gray)(id)(`Size: ${Math.round(size / 1024)}KB`),
 })
 
 export const ConsoleProgressReporter = (
