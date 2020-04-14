@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { promises as fs, statSync } from 'fs'
+import { promises as fs } from 'fs'
 import { S3 } from 'aws-sdk'
 
 const s3 = new S3()
@@ -11,11 +11,11 @@ export const existsOnS3 = async (
 	Bucket: string,
 	Key: string,
 	outDir: string,
-): Promise<boolean> => {
+): Promise<number> => {
 	const awsLockFile = path.resolve(outDir, `${Bucket}.${Key}.aws.json`)
 	try {
-		statSync(awsLockFile)
-		return true
+		const info = JSON.parse((await fs.readFile(awsLockFile)).toString())
+		return info.ContentLength
 	} catch (_) {
 		try {
 			const res = await s3
@@ -25,9 +25,9 @@ export const existsOnS3 = async (
 				})
 				.promise()
 			await fs.writeFile(awsLockFile, JSON.stringify(res), 'utf-8')
-			return true // File exists
+			return res.ContentLength as number // File exists
 		} catch (err) {
-			return false
+			return 0
 		}
 	}
 }
