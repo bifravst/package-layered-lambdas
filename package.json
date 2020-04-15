@@ -36,7 +36,7 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "@bifravst/code-style": "^7.0.5",
+    "@bifravst/code-style": "^7.1.0",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-angular": "^8.3.4",
     "@types/dependency-tree": "^7.2.0",
