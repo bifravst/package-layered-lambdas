@@ -9,7 +9,9 @@
     "url": "git+https://github.com/bifravst/package-layered-lambdas.git"
   },
   "scripts": {
-    "lint": "eslint --ext .js,.ts src/**"
+    "lint": "eslint --ext .js,.ts src/**",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "aws",
@@ -33,7 +35,8 @@
     "ts-loader": "^7.0.1",
     "webpack": "^4.43.0",
     "webpack-node-externals": "^1.7.2",
-    "yazl": "^2.5.1"
+    "yazl": "^2.5.1",
+    "snyk": "^*"
   },
   "devDependencies": {
     "@bifravst/code-style": "^7.1.0",
@@ -84,5 +87,6 @@
     "*.{md,json,yaml,yml,js}": [
       "prettier --write"
     ]
-  }
+  },
+  "snyk": true
 }
