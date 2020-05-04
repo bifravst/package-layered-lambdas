@@ -30,7 +30,7 @@
     "glob": "^7.1.6",
     "tables": "^2.2.2",
     "tmp": "^0.2.1",
-    "ts-loader": "^7.0.1",
+    "ts-loader": "^7.0.2",
     "webpack": "^4.43.0",
     "webpack-node-externals": "^1.7.2",
     "yazl": "^2.5.1"
