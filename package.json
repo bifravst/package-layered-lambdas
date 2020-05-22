@@ -36,7 +36,7 @@
     "webpack": "^4.43.0",
     "webpack-node-externals": "^1.7.2",
     "yazl": "^2.5.1",
-    "snyk": "^*"
+    "snyk": "^1.316.2"
   },
   "devDependencies": {
     "@bifravst/code-style": "^7.1.0",
