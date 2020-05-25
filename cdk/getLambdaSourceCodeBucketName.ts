@@ -1,9 +1,7 @@
 import { CloudFormation } from 'aws-sdk'
 import { LambdaSourceCodeStorageStack } from './LambdaSourceCodeStorageStack'
 
-const cf = new CloudFormation({
-	region: process.env.AWS_DEFAULT_REGION,
-})
+const cf = new CloudFormation()
 
 export const getLambdaSourceCodeBucketName = async ({
 	stackName,
