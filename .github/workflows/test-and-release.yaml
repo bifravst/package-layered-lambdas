@@ -10,6 +10,7 @@ env:
   CI: 1
   FORCE_COLOR: 3
   STACK_NAME: pll-${{ github.sha }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   tests:
