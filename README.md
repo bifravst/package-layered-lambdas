@@ -13,10 +13,15 @@ when files are changed.
 Packaged lambdas are published to S3 so they can be picked up from
 CloudFormation and shared also cached for other developers.
 
+## Installation
+
+    npm i --save-dev @bifravst/package-layered-lambdas
+
+## Usage
+
 More background information on this project and usage instructions can be found
 in
 [this blog post](https://coderbyheart.com/how-i-package-typescript-lambdas-for-aws/).
 
-## Installation
-
-    npm i --save-dev @bifravst/package-layered-lambdas
+Also, have a look at the [test stack](./cdk/cloudformation.ts), which uses this
+library to publish a lambda.
