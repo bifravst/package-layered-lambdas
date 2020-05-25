@@ -3,42 +3,61 @@ name: Test and Release
 on: push
 
 env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.CI_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: eu-central-1
+  CI: 1
+  FORCE_COLOR: 3
+  STACK_NAME: pll-${{ github.sha }}
 
 jobs:
   tests:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - name: Set up Node.js 14
+        uses: actions/setup-node@v1
         with:
           node-version: "14.x"
-      - name: Install latest npm
+      - name: Cache AWS CLI
+        id: cache-aws-cli
+        uses: actions/cache@v1
+        with:
+          path: aws/
+          key: ${{ runner.OS }}-cache-aws-cli
+      - name: Install AWS
+        if: steps.cache-aws-cli.outputs.cache-hit != 'true'
         run: |
-          sudo npm install -g npm@
-          npm config set update-notifier false
-      - name: Authenticate with NPM registry
-        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
       - name: Keep npm cache around to speed up installs
         uses: actions/cache@v1
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
       - name: Install dependencies
         run: npm ci --no-audit
-      - name: Compile
+      - name: Compile source
         run: npx tsc
-      - name: Lint
-        run: npm run lint
+      - name: Set up stack for tests
+        run: |
+          npx cdk -a 'node dist/cdk/cloudformation-sourcecode.js' deploy
+          npx cdk -a 'node dist/cdk/cloudformation.js' deploy --require-approval never
+      - name: Run tests
+        run: npm test
       - name: Semantic release
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm i --no-save semantic-release
           npx semantic-release
+      - name: Clean up test resources
+        if: always()
+        run: |
+          npx cdk -a 'node dist/cdk/cloudformation.js' destroy -f '*'
+          # Delete sourcecode bucket
+          SOURCE_CODE_BUCKET=`aws cloudformation describe-stacks --stack-name $STACK_NAME-sourcecode | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "bucketName") | .OutputValue'`
+          aws s3 rb s3://$SOURCE_CODE_BUCKET --force
+          # Delete the sourceode stack
+          npx cdk -a 'node dist/cdk/cloudformation-sourcecode.js' destroy -f '*'
