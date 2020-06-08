@@ -143,8 +143,8 @@ export const packLambda = async (args: {
 				},
 			},
 			async (err, stats) => {
-				if (err || stats.hasErrors()) {
-					failure('webpack failed', err.message)
+				if (err !== undefined || stats.hasErrors()) {
+					failure('webpack failed', err?.message)
 					console.error(err)
 					console.error(stats.toString())
 					return reject(err)

@@ -10,7 +10,7 @@ export const publishToS3 = async (
 	Bucket: string,
 	Key: string,
 	location: string,
-) => {
+): Promise<void> => {
 	const Body = await fs.readFile(location)
-	return s3.putObject({ Body, Bucket, Key }).promise()
+	await s3.putObject({ Body, Bucket, Key }).promise()
 }

@@ -53,7 +53,7 @@ const tableWriter = (title: string) => {
 				[
 					[
 						chalk.yellow.bold(title),
-						...['Time', 'Size', 'Status'].map(s => chalk.yellow.dim(s)),
+						...['Time', 'Size', 'Status'].map((s) => chalk.yellow.dim(s)),
 					],
 					...Array.from(items, ([id, { status, message, info, updated }]) => {
 						const startTime = startTimes.get(id)
@@ -62,13 +62,16 @@ const tableWriter = (title: string) => {
 							color[status](id) +
 								`${
 									info && info.length > 0
-										? chalk.grey(': ') + info.map(i => chalk.blue(i)).join(' ')
+										? chalk.grey(': ') +
+										  info.map((i) => chalk.blue(i)).join(' ')
 										: ''
 								}`,
 							startTime
 								? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
 								: chalk.grey.dim('-'),
-							size ? chalk.blue(`${Math.round(size / 1024)} KB`) : '',
+							size !== undefined
+								? chalk.blue(`${Math.round(size / 1024)} KB`)
+								: '',
 							color[status](message),
 						]
 					}),
@@ -203,4 +206,4 @@ const onCI = () => ({
 export const ConsoleProgressReporter = (
 	title: string,
 	ci = process.env.CI,
-): ProgressReporter => (ci ? onCI() : onScreen(title))
+): ProgressReporter => (ci !== undefined ? onCI() : onScreen(title))

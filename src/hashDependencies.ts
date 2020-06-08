@@ -41,8 +41,6 @@ export const hashDependencies = async (args: {
 		const deps = dependencyTree.toList({
 			filename: src,
 			directory: srcDir,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-			// @ts-ignore
 			tsConfig,
 			filter: (sourceFile: string) =>
 				!sourceFile.includes('node_modules') && ignoreFolders // do not look at module dependencies

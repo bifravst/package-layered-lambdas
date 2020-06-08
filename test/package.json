@@ -1,0 +1,11 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "dependencies": {
+    "uuid": "8.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.53",
+    "@types/uuid": "8.0.0"
+  }
+}

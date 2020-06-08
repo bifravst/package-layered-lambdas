@@ -32,7 +32,7 @@ export const packBaseLayer = async ({
 	const zipFilenameWithHash = `${name}.zip`
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
-	const r = reporter || ConsoleProgressReporter('Base Layer')
+	const r = reporter ?? ConsoleProgressReporter('Base Layer')
 	const progress = r.progress(name)
 	const success = r.success(name)
 	const failure = r.failure(name)
