@@ -17,16 +17,18 @@ export const packBaseLayer = async ({
 	outDir,
 	Bucket,
 	reporter,
+	layerName,
 }: {
 	srcDir: string
 	outDir: string
 	Bucket: string
 	reporter?: ProgressReporter
+	layerName?: string
 }): Promise<string> => {
 	const lockFile = path.resolve(srcDir, 'package-lock.json')
 	const hash = (await checkSumOfFiles([lockFile])).checksum
 
-	const name = `base-layer-${hash}`
+	const name = `${layerName ?? 'base-layer'}-${hash}`
 	const zipFilenameWithHash = `${name}.zip`
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
@@ -85,7 +87,7 @@ export const packBaseLayer = async ({
 		const p = spawn('npm', ['ci', '--ignore-scripts', '--only=prod'], {
 			cwd: installDir,
 		})
-		p.on('close', code => {
+		p.on('close', (code) => {
 			if (code !== 0) {
 				const msg = `npm i in ${installDir} exited with code ${code}.`
 				failure(msg)
@@ -94,19 +96,19 @@ export const packBaseLayer = async ({
 			success('Dependencies installed')
 			return resolve()
 		})
-		p.stdout.on('data', data => {
+		p.stdout.on('data', (data) => {
 			progress('Installing dependencies:', data.toString())
 		})
-		p.stderr.on('data', data => {
+		p.stderr.on('data', (data) => {
 			progress('Installing dependencies:', data.toString())
 		})
 	})
 
-	await new Promise(resolve => {
+	await new Promise((resolve) => {
 		progress('Creating archive')
 		const zipfile = new yazl.ZipFile()
 		const files = glob.sync(`${tempDir}${path.sep}**${path.sep}*`)
-		files.forEach(file => {
+		files.forEach((file) => {
 			if (fs.statSync(file).isFile()) {
 				zipfile.addFile(file, file.replace(`${tempDir}${path.sep}`, ''))
 			}
