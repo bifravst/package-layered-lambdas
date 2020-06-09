@@ -1,5 +1,5 @@
 import { packLambda, WebpackMode } from './packLambda'
-import { ConsoleProgressReporter } from './reporter'
+import { ProgressReporter, ConsoleProgressReporter } from './reporter'
 
 export type LayeredLambdas<A extends { [key: string]: string }> = {
 	id: string
@@ -17,15 +17,15 @@ export const packLayeredLambdas = async <
 	Bucket: string
 	lambdas: A
 	ignoreFolders?: string[]
+	reporter?: ProgressReporter
 }): Promise<LayeredLambdas<A>> => {
-	const r = ConsoleProgressReporter('Lambdas')
 	const packs = await Promise.all(
-		Object.keys(args.lambdas).map(async lambda =>
+		Object.keys(args.lambdas).map(async (lambda) =>
 			packLambda({
 				...args,
 				name: lambda,
 				src: args.lambdas[lambda],
-				reporter: r,
+				reporter: args.reporter ?? ConsoleProgressReporter(args.id),
 			}),
 		),
 	)

@@ -26,7 +26,7 @@ export const packLambda = async (args: {
 	name: string
 	src: string
 	tsConfig: string
-	reporter: ProgressReporter
+	reporter?: ProgressReporter
 	ignoreFolders?: string[]
 }): Promise<{
 	name: string
@@ -38,15 +38,15 @@ export const packLambda = async (args: {
 	}
 }> => {
 	const { tsConfig, mode, outDir, Bucket, name, src, reporter } = args
-	const progress = reporter.progress(name)
-	const success = reporter.success(name)
-	const failure = reporter.failure(name)
-	const sizeInBytes = reporter.sizeInBytes(name)
+	const progress = reporter?.progress?.(name)
+	const success = reporter?.success?.(name)
+	const failure = reporter?.failure?.(name)
+	const sizeInBytes = reporter?.sizeInBytes?.(name)
 
 	try {
 		fs.statSync(src)
 	} catch (e) {
-		failure(
+		failure?.(
 			`The source file ${chalk.cyan(src)} for ${chalk.green(
 				name,
 			)} does not exist!`,
@@ -63,11 +63,11 @@ export const packLambda = async (args: {
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
 	// Check if it already has been built and published
-	progress('Checking if lambda exists on S3')
+	progress?.('Checking if lambda exists on S3')
 	let fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 	if (fileSize) {
-		success('OK')
-		sizeInBytes(fileSize)
+		success?.('OK')
+		sizeInBytes?.(fileSize)
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -78,10 +78,10 @@ export const packLambda = async (args: {
 	// Check if it already has been built locally
 	try {
 		const { size } = fs.statSync(localPath)
-		success('OK')
-		sizeInBytes(size)
+		success?.('OK')
+		sizeInBytes?.(size)
 		// File exists
-		progress('Publishing to S3', `-> ${Bucket}`)
+		progress?.('Publishing to S3', `-> ${Bucket}`)
 		await publishToS3(Bucket, zipFilenameWithHash, localPath)
 		await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 		return {
@@ -94,11 +94,11 @@ export const packLambda = async (args: {
 	}
 
 	// Check if file exists on S3
-	progress('Checking if lambda exists on S3')
+	progress?.('Checking if lambda exists on S3')
 	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
 	if (fileSize) {
-		success('OK')
-		sizeInBytes(fileSize)
+		success?.('OK')
+		sizeInBytes?.(fileSize)
 		return {
 			name,
 			zipFileName: zipFilenameWithHash,
@@ -106,7 +106,7 @@ export const packLambda = async (args: {
 		}
 	}
 
-	progress('Packing')
+	progress?.('Packing')
 	await new Promise<string>((resolve, reject) =>
 		webpack(
 			{
@@ -143,15 +143,15 @@ export const packLambda = async (args: {
 				},
 			},
 			async (err, stats) => {
-				if (err !== undefined || stats.hasErrors()) {
-					failure('webpack failed', err?.message)
+				if ((err !== null && err !== undefined) || stats.hasErrors()) {
+					failure?.('webpack failed', err?.message)
 					console.error(err)
 					console.error(stats.toString())
 					return reject(err)
 				}
 				const f = path.resolve(outDir, jsFilenameWithHash)
 
-				progress('Creating archive')
+				progress?.('Creating archive')
 				const zipfile = new yazl.ZipFile()
 				zipfile.addFile(f, 'index.js')
 				zipfile.addBuffer(
@@ -161,7 +161,7 @@ export const packLambda = async (args: {
 				zipfile.outputStream
 					.pipe(fs.createWriteStream(localPath))
 					.on('close', () => {
-						success(
+						success?.(
 							'Lambda packed',
 							`${Math.round(fs.statSync(localPath).size / 1024)}KB`,
 						)
@@ -172,11 +172,11 @@ export const packLambda = async (args: {
 		),
 	)
 
-	progress('Publishing to S3', `-> ${Bucket}`)
+	progress?.('Publishing to S3', `-> ${Bucket}`)
 	await publishToS3(Bucket, zipFilenameWithHash, localPath)
 	fileSize = await existsOnS3(Bucket, zipFilenameWithHash, outDir)
-	sizeInBytes(fileSize)
-	success('All done')
+	sizeInBytes?.(fileSize)
+	success?.('All done')
 
 	return {
 		zipFileName: zipFilenameWithHash,
