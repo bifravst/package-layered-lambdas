@@ -1,6 +1,74 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.14.1
-ignore: {}
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-MINIMIST-559764:
+    - dependency-tree > precinct > detective-less > gonzales-pe > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.111Z'
+    - dependency-tree > precinct > detective-sass > gonzales-pe > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.111Z'
+    - dependency-tree > precinct > detective-scss > gonzales-pe > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.111Z'
+    - snyk > update-notifier > latest-version > package-json > registry-auth-token > rc > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.113Z'
+    - snyk > update-notifier > latest-version > package-json > registry-url > rc > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.113Z'
+    - tables > tito > ndjson > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.115Z'
+    - tables > sqlite3 > node-pre-gyp > rc > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.115Z'
+    - tables > sqlite3 > node-pre-gyp > mkdirp > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.116Z'
+    - tables > sqlite3 > node-pre-gyp > tar > mkdirp > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.116Z'
+    - ts-loader > loader-utils > json5 > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.117Z'
+    - webpack > loader-utils > json5 > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.119Z'
+    - webpack > terser-webpack-plugin > cacache > mkdirp > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.119Z'
+    - webpack > terser-webpack-plugin > cacache > move-concurrently > mkdirp > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.120Z'
+    - webpack > terser-webpack-plugin > cacache > move-concurrently > copy-concurrently > mkdirp > minimist:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.120Z'
+  SNYK-JS-AJV-584908:
+    - tables > sqlite3 > request > har-validator > ajv:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.114Z'
+    - webpack > ajv:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.117Z'
+    - webpack > schema-utils > ajv:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.117Z'
+    - webpack > terser-webpack-plugin > schema-utils > ajv:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.118Z'
+  SNYK-JS-ELLIPTIC-571484:
+    - webpack > node-libs-browser > crypto-browserify > browserify-sign > elliptic:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.119Z'
+    - webpack > node-libs-browser > crypto-browserify > create-ecdh > elliptic:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.119Z'
+  SNYK-JS-SERIALIZEJAVASCRIPT-570062:
+    - webpack > terser-webpack-plugin > serialize-javascript:
+        reason: Build time dependency
+        expires: '2020-08-27T14:30:34.120Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-567746:
