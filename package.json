@@ -46,8 +46,8 @@
     "@aws-cdk/core": "^1.44.0",
     "@bifravst/cloudformation-helpers": "^3.0.6",
     "@bifravst/code-style": "^8.0.1",
-    "@commitlint/cli": "^8.3.5",
-    "@commitlint/config-angular": "^8.3.4",
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-angular": "^9.1.2",
     "@types/aws-lambda": "^8.10.53",
     "@types/dependency-tree": "^7.2.0",
     "@types/glob": "^7.1.2",
@@ -84,7 +84,7 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -e",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
   },
