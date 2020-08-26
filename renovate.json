@@ -1,6 +1,5 @@
 {
   "extends": [
     "github>bifravst/code-style"
-  ],
-  "includeForks": true
+  ]
 }
