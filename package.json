@@ -41,9 +41,9 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "@aws-cdk/aws-lambda": "1.61.0",
-    "@aws-cdk/aws-s3": "1.61.0",
-    "@aws-cdk/core": "1.61.0",
+    "@aws-cdk/aws-lambda": "1.61.1",
+    "@aws-cdk/aws-s3": "1.61.1",
+    "@aws-cdk/core": "1.61.1",
     "@bifravst/cloudformation-helpers": "3.1.24",
     "@bifravst/code-style": "8.0.47",
     "@commitlint/cli": "9.1.2",
@@ -59,7 +59,7 @@
     "@types/webpack": "4.41.21",
     "@types/webpack-node-externals": "2.5.0",
     "@types/yazl": "2.4.2",
-    "cdk": "1.61.0",
+    "cdk": "1.61.1",
     "eslint": "7.7.0",
     "husky": "4.2.5"
   },
