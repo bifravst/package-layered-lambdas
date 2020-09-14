@@ -44,7 +44,7 @@
     "@aws-cdk/aws-lambda": "1.63.0",
     "@aws-cdk/aws-s3": "1.63.0",
     "@aws-cdk/core": "1.63.0",
-    "@bifravst/cloudformation-helpers": "3.1.35",
+    "@bifravst/cloudformation-helpers": "3.1.36",
     "@bifravst/code-style": "8.0.79",
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-angular": "11.0.0",
