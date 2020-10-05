@@ -44,9 +44,9 @@ const tableWriter = (title: string) => {
 		failure: chalk.red,
 	}
 	return (
-		items: Map<string, Status>,
-		startTimes: Map<string, Date>,
-		sizesInBytes: Map<string, number>,
+		items: Record<string, Status>,
+		startTimes: Record<string, Date>,
+		sizesInBytes: Record<string, number>,
 	) => {
 		screenWriter(
 			table(
@@ -55,32 +55,34 @@ const tableWriter = (title: string) => {
 						chalk.yellow.bold(title),
 						...['Time', 'Size', 'Status'].map((s) => chalk.yellow.dim(s)),
 					],
-					...Array.from(items, ([id, { status, message, info, updated }]) => {
-						const startTime = startTimes.get(id)
-						const size = sizesInBytes.get(id)
-						return [
-							color[status](id) +
-								`${
-									info && info.length > 0
-										? chalk.grey(': ') +
-										  info.map((i) => chalk.blue(i)).join(' ')
-										: ''
-								}`,
-							startTime
-								? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
-								: chalk.grey.dim('-'),
-							size !== undefined
-								? chalk.blue(`${Math.round(size / 1024)} KB`)
-								: '',
-							color[status](message),
-						]
-					}),
+					...Object.entries(items).map(
+						([id, { status, message, info, updated }]) => {
+							const startTime = startTimes[id]
+							const size = sizesInBytes[id]
+							return [
+								color[status](id) +
+									`${
+										info && info.length > 0
+											? chalk.grey(': ') +
+											  info.map((i) => chalk.blue(i)).join(' ')
+											: ''
+									}`,
+								startTime !== undefined
+									? chalk.grey(`${updated.getTime() - startTime.getTime()}ms`)
+									: chalk.grey.dim('-'),
+								size !== undefined
+									? chalk.blue(`${Math.round(size / 1024)} KB`)
+									: '',
+								color[status](message),
+							]
+						},
+					),
 					[
 						'',
 						'',
 						chalk.blue.dim(
 							`${Math.round(
-								Array.from(sizesInBytes, ([, size]) => size).reduce(
+								Object.values(sizesInBytes).reduce(
 									(total, size) => total + size,
 									0,
 								) / 1024,
@@ -137,47 +139,47 @@ const tableWriter = (title: string) => {
 
 const onScreen = (title: string) => {
 	const d = tableWriter(title)
-	const items = new Map<string, Status>()
-	const startTimes = new Map<string, Date>()
-	const sizesInBytes = new Map<string, number>()
+	const items = {} as Record<string, Status>
+	const startTimes = {} as Record<string, Date>
+	const sizesInBytes = {} as Record<string, number>
 	const start = (id: string) => {
-		if (!startTimes.has(id)) {
-			startTimes.set(id, new Date())
+		if (startTimes[id] === undefined) {
+			startTimes[id] = new Date()
 		}
 	}
 	return {
 		progress: (id: string) => (message: string, ...info: string[]) => {
-			items.set(id, {
+			items[id] = {
 				status: 'progress',
 				message,
 				info,
 				updated: new Date(),
-			})
+			}
 			start(id)
 			d(items, startTimes, sizesInBytes)
 		},
 		success: (id: string) => (message: string, ...info: string[]) => {
-			items.set(id, {
+			items[id] = {
 				status: 'success',
 				message,
 				info,
 				updated: new Date(),
-			})
+			}
 			start(id)
 			d(items, startTimes, sizesInBytes)
 		},
 		failure: (id: string) => (message: string, ...info: string[]) => {
-			items.set(id, {
+			items[id] = {
 				status: 'failure',
 				message,
 				info,
 				updated: new Date(),
-			})
+			}
 			start(id)
 			d(items, startTimes, sizesInBytes)
 		},
 		sizeInBytes: (id: string) => (size: number) => {
-			sizesInBytes.set(id, size)
+			sizesInBytes[id] = size
 			d(items, startTimes, sizesInBytes)
 		},
 	}
