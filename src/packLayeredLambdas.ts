@@ -19,13 +19,14 @@ export const packLayeredLambdas = async <
 	ignoreFolders?: string[]
 	reporter?: ProgressReporter
 }): Promise<LayeredLambdas<A>> => {
+	const r = args.reporter ?? ConsoleProgressReporter(args.id)
 	const packs = await Promise.all(
 		Object.keys(args.lambdas).map(async (lambda) =>
 			packLambda({
 				...args,
 				name: lambda,
 				src: args.lambdas[lambda],
-				reporter: args.reporter ?? ConsoleProgressReporter(args.id),
+				reporter: r,
 			}),
 		),
 	)
