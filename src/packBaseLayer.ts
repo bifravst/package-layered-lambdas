@@ -28,8 +28,8 @@ export const packBaseLayer = async ({
 	const lockFile = path.resolve(srcDir, 'package-lock.json')
 	const hash = (await checkSumOfFiles([lockFile])).checksum
 
-	const name = `${layerName ?? 'base-layer'}-${hash}`
-	const zipFilenameWithHash = `${name}.zip`
+	const name = layerName ?? 'base-layer'
+	const zipFilenameWithHash = `${layerName ?? 'base-layer'}-${hash}.zip`
 	const localPath = path.resolve(outDir, zipFilenameWithHash)
 
 	const r = reporter ?? ConsoleProgressReporter('Base Layer')
