@@ -33,7 +33,7 @@
     "dependency-tree": "^7.2.1",
     "glob": "^7.1.6",
     "snyk": "1.413.2",
-    "tables": "^2.2.2",
+    "table": "^6.0.3",
     "tmp": "^0.2.1",
     "ts-loader": "8.0.4",
     "webpack": "5.0.0",
