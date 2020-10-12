@@ -143,10 +143,10 @@ export const packLambda = async (args: {
 				},
 			},
 			async (err, stats) => {
-				if ((err !== null && err !== undefined) || stats.hasErrors()) {
+				if (err !== null && err !== undefined) {
 					failure?.('webpack failed', err?.message)
 					console.error(err)
-					console.error(stats.toString())
+					if (stats?.hasErrors() ?? false) console.error(stats?.toString())
 					return reject(err)
 				}
 				const f = path.resolve(outDir, jsFilenameWithHash)
