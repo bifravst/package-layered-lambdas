@@ -44,7 +44,7 @@
     "@aws-cdk/aws-lambda": "1.68.0",
     "@aws-cdk/aws-s3": "1.68.0",
     "@aws-cdk/core": "1.68.0",
-    "@bifravst/cloudformation-helpers": "3.1.56",
+    "@bifravst/cloudformation-helpers": "3.1.57",
     "@bifravst/code-style": "8.0.134",
     "@bifravst/eslint-config-typescript": "5.0.66",
     "@commitlint/cli": "11.0.0",
