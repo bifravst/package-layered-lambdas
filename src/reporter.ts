@@ -189,12 +189,7 @@ const log = (color: chalk.Chalk, brightColor: chalk.Chalk) => (id: string) => (
 	message: string,
 	...info: string[]
 ) => {
-	console.log(
-		chalk.white.dim(`[${new Date().toISOString()}]`),
-		color(id),
-		brightColor(message),
-		...info,
-	)
+	console.log(color(id), brightColor(message), ...info)
 }
 
 const onCI = () => ({
