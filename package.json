@@ -35,7 +35,7 @@
     "snyk": "1.424.4",
     "table": "^6.0.3",
     "tmp": "^0.2.1",
-    "ts-loader": "8.0.9",
+    "ts-loader": "8.0.10",
     "webpack": "5.4.0",
     "webpack-node-externals": "^2.5.2",
     "yazl": "^2.5.1"
