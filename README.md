@@ -28,3 +28,21 @@ in
 
 Also, have a look at the [test stack](./cdk/cloudformation.ts), which uses this
 library to publish a lambda.
+
+## Use with Yarn
+
+The lockfile name and the command used to install the dependencies of
+`packBaseLayer` are configureable. For use with Yarn use these settings:
+
+```typescript
+packBaseLayer({
+  lockFileName: "yarn.lock",
+  installCommand: [
+    "yarn",
+    "install",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--production",
+  ],
+});
+```
