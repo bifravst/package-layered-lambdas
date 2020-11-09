@@ -34,6 +34,14 @@ export const prepareResources = async ({
 		srcDir: rootDir,
 		outDir,
 		Bucket: sourceCodeBucketName,
+		lockFileName: 'yarn.lock',
+		installCommand: [
+			'yarn',
+			'install',
+			'--frozen-lockfile',
+			'--ignore-scripts',
+			'--production',
+		],
 	})
 	const lambdas = await packLayeredLambdas<TestStackLambdas>({
 		id: 'test-lambdas',

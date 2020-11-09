@@ -18,14 +18,24 @@ export const packBaseLayer = async ({
 	Bucket,
 	reporter,
 	layerName,
+	lockFileName,
+	installCommand,
 }: {
 	srcDir: string
 	outDir: string
 	Bucket: string
 	reporter?: ProgressReporter
 	layerName?: string
+	/**
+	 * The name to the lockfile, defaults to "package-lock.json"
+	 */
+	lockFileName?: string
+	/**
+	 * The command (and optionally arguments) used to install the dependencies.
+	 */
+	installCommand?: string[]
 }): Promise<string> => {
-	const lockFile = path.resolve(srcDir, 'package-lock.json')
+	const lockFile = path.resolve(srcDir, lockFileName ?? 'package-lock.json')
 	const hash = (await checkSumOfFiles([lockFile])).checksum
 
 	const name = layerName ?? 'base-layer'
@@ -84,12 +94,20 @@ export const packBaseLayer = async ({
 
 	await new Promise((resolve, reject) => {
 		progress('Installing dependencies')
-		const p = spawn('npm', ['ci', '--ignore-scripts', '--only=prod'], {
+		const [cmd, ...args] = installCommand ?? [
+			'npm',
+			'ci',
+			'--ignore-scripts',
+			'--only=prod',
+		]
+		const p = spawn(cmd, args, {
 			cwd: installDir,
 		})
 		p.on('close', (code) => {
 			if (code !== 0) {
-				const msg = `npm i in ${installDir} exited with code ${code}.`
+				const msg = `${cmd} ${args.join(
+					' ',
+				)} in ${installDir} exited with code ${code}.`
 				failure(msg)
 				return reject(new Error(msg))
 			}
