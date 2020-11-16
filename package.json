@@ -28,7 +28,7 @@
   "dependencies": {
     "ansi-escapes": "^4.3.1",
     "aws-lambda": "^1.0.6",
-    "aws-sdk": "2.792.0",
+    "aws-sdk": "2.793.0",
     "chalk": "^4.1.0",
     "dependency-tree": "7.2.2",
     "glob": "^7.1.6",
