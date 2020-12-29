@@ -30,7 +30,7 @@
     "aws-lambda": "^1.0.6",
     "aws-sdk": "2.818.0",
     "chalk": "^4.1.0",
-    "dependency-tree": "7.2.2",
+    "dependency-tree": "8.0.0",
     "glob": "^7.1.6",
     "snyk": "1.437.3",
     "table": "^6.0.4",
