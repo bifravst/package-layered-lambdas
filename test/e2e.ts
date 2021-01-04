@@ -2,6 +2,7 @@ import { CloudFormationClient } from '@aws-sdk/client-cloudformation'
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda'
 import { stackOutput } from '@bifravst/cloudformation-helpers'
 import { strict as assert } from 'assert'
+import { TextDecoder } from 'util'
 
 const cf = new CloudFormationClient({})
 const so = stackOutput(cf)
@@ -16,8 +17,11 @@ so<{ uuidLambdaName: string }>(process.env.STACK_NAME ?? '')
 		),
 	)
 	.then(({ Payload }) => {
+		if (Payload === undefined) throw new Error(`No payload.`)
 		try {
-			const { statusCode, body } = JSON.parse(Payload?.toString() ?? '')
+			const { statusCode, body } = JSON.parse(
+				new TextDecoder('utf-8').decode(Payload),
+			)
 			assert.equal(statusCode, 200, 'Status code should be 200')
 			assert.match(
 				body,
