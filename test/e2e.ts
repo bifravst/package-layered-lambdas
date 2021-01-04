@@ -16,13 +16,17 @@ so<{ uuidLambdaName: string }>(process.env.STACK_NAME ?? '')
 		),
 	)
 	.then(({ Payload }) => {
-		const { statusCode, body } = JSON.parse(Payload?.toString() ?? '')
-		assert.equal(statusCode, 200, 'Status code should be 200')
-		assert.match(
-			body,
-			/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
-			'Body should be a v4 UUID',
-		)
+		try {
+			const { statusCode, body } = JSON.parse(Payload?.toString() ?? '')
+			assert.equal(statusCode, 200, 'Status code should be 200')
+			assert.match(
+				body,
+				/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+				'Body should be a v4 UUID',
+			)
+		} catch (err) {
+			assert.fail(`Failed to parse JSON: ${Payload?.toString() ?? ''}`)
+		}
 	})
 	.catch((err) => {
 		console.error(err)
