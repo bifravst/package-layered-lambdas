@@ -1,8 +1,8 @@
 import * as path from 'path'
 import { promises as fs } from 'fs'
-import { S3 } from 'aws-sdk'
+import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
-const s3 = new S3()
+const s3 = new S3Client({})
 
 /**
  * Checks whether the file exists on S3
@@ -18,12 +18,13 @@ export const existsOnS3 = async (
 		return info.ContentLength
 	} catch (_) {
 		try {
-			const res = await s3
-				.headObject({
+			const res = await s3.send(
+				new HeadObjectCommand({
 					Bucket,
 					Key,
-				})
-				.promise()
+				}),
+			)
+
 			await fs.writeFile(awsLockFile, JSON.stringify(res), 'utf-8')
 			return res.ContentLength as number // File exists
 		} catch (err) {

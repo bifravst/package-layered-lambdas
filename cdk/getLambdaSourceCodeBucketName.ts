@@ -1,7 +1,10 @@
-import { CloudFormation } from 'aws-sdk'
+import {
+	CloudFormationClient,
+	DescribeStacksCommand,
+} from '@aws-sdk/client-cloudformation'
 import { LambdaSourceCodeStorageStack } from './LambdaSourceCodeStorageStack'
 
-const cf = new CloudFormation()
+const cf = new CloudFormationClient({})
 
 export const getLambdaSourceCodeBucketName = async ({
 	stackName,
@@ -9,10 +12,11 @@ export const getLambdaSourceCodeBucketName = async ({
 	stackName: string
 }): Promise<string> =>
 	cf
-		.describeStacks({
-			StackName: LambdaSourceCodeStorageStack.stackName({ stackName }),
-		})
-		.promise()
+		.send(
+			new DescribeStacksCommand({
+				StackName: LambdaSourceCodeStorageStack.stackName({ stackName }),
+			}),
+		)
 		.then(({ Stacks }) => {
 			if (Stacks === undefined || !Stacks.length) {
 				throw new Error(
@@ -22,9 +26,9 @@ export const getLambdaSourceCodeBucketName = async ({
 				)
 			} else {
 				const stack = Stacks[0]
-				const BucketOutput =
-					stack.Outputs &&
-					stack.Outputs.find(({ OutputKey }) => OutputKey === 'bucketName')
+				const BucketOutput = stack.Outputs?.find(
+					({ OutputKey }) => OutputKey === 'bucketName',
+				)
 				if (
 					BucketOutput === undefined ||
 					BucketOutput.OutputValue === undefined

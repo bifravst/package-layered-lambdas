@@ -13,31 +13,28 @@ const hashCache: { [key: string]: string } = {}
 export const checkSum = async (
 	filesOrPatterns: string[],
 ): Promise<{ [key: string]: string }> => {
-	const files = await Promise.all(filesOrPatterns.map(async p => g(p)))
+	const files = await Promise.all(filesOrPatterns.map(async (p) => g(p)))
 	const hashes: { [key: string]: string } = {}
 	await files
-		.filter(list => list.length) // Filter empty file matches which nean that the file might have been (re)moved
+		.filter((list) => list.length) // Filter empty file matches which nean that the file might have been (re)moved
 		.reduce(
 			async (p, file) =>
 				p.then(async () =>
-					new Promise<string>(resolve => {
+					new Promise<string>((resolve) => {
 						if (hashCache[`${file}`]) {
 							return resolve(hashCache[`${file}`])
 						}
 						const hash = crypto.createHash('sha1')
 						hash.setEncoding('hex')
 						const fileStream = fs.createReadStream(`${file}`)
-						fileStream.pipe(
-							hash,
-							{ end: false },
-						)
+						fileStream.pipe(hash, { end: false })
 						fileStream.on('end', () => {
 							hash.end()
 							const h = hash.read().toString()
 							hashCache[`${file}`] = h
 							resolve(h)
 						})
-					}).then(fileHash => {
+					}).then((fileHash) => {
 						hashes[`${file}`] = fileHash
 					}),
 				),
