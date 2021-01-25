@@ -92,7 +92,7 @@ export const packBaseLayer = async ({
 		`${installDir}${path.sep}package.json`,
 	)
 
-	await new Promise((resolve, reject) => {
+	await new Promise<void>((resolve, reject) => {
 		progress('Installing dependencies')
 		const [cmd, ...args] = installCommand ?? [
 			'npm',
@@ -122,7 +122,7 @@ export const packBaseLayer = async ({
 		})
 	})
 
-	await new Promise((resolve) => {
+	await new Promise<void>((resolve) => {
 		progress('Creating archive')
 		const zipfile = new yazl.ZipFile()
 		const files = glob.sync(`${tempDir}${path.sep}**${path.sep}*`)

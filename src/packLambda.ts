@@ -107,7 +107,7 @@ export const packLambda = async (args: {
 	}
 
 	progress?.('Packing')
-	await new Promise<string>((resolve, reject) =>
+	await new Promise<void>((resolve, reject) =>
 		webpack(
 			{
 				entry: [src],
