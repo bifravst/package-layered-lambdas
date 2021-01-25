@@ -27,7 +27,9 @@ in
 [this blog post](https://coderbyheart.com/how-i-package-typescript-lambdas-for-aws/).
 
 Also, have a look at the [test stack](./cdk/cloudformation.ts), which uses this
-library to publish a lambda.
+library to publish a lambda and especially the
+[`cdk/prepareResources.ts`](./cdk/prepareResources.ts) which shows how to
+package a lambda and a layer.
 
 ## Use with Yarn
 
