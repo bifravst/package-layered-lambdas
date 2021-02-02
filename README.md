@@ -1,3 +1,6 @@
+> **:truck: moved to https://github.com/NordicSemiconductor/cloud-aws-package-layered-lambdas-js**  
+> :information_source: [more info](https://github.com/bifravst/bifravst/issues/56)
+
 # Package Layered Lambdas [![npm version](https://img.shields.io/npm/v/@bifravst/package-layered-lambdas.svg)](https://www.npmjs.com/package/@bifravst/package-layered-lambdas)
 
 [![GitHub Actions](https://github.com/bifravst/package-layered-lambdas/workflows/Test%20and%20Release/badge.svg)](https://github.com/bifravst/package-layered-lambdas/actions)
